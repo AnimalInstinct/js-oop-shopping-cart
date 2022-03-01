@@ -7,9 +7,14 @@ class ElementAttribute {
 
 class Component {
     
-    constructor(renderHookId) {
+    constructor(renderHookId, shouldRender = true) {
         this.hookId = renderHookId
+        if (shouldRender) {
+            this.render()
+        }
     }
+
+    render() {}
 
     createRootElement(tag, cssClasses, attributes) {
         const rootEl = document.createElement(tag);
@@ -42,8 +47,9 @@ class Product {
 
 class ProductItem extends Component {
     constructor(product, renderHookId) {
-        super(renderHookId)
+        super(renderHookId, false)
         this.product = product
+        this.render()
     }
 
     addToCartHandler() {
@@ -73,33 +79,42 @@ class ProductItem extends Component {
 }
 
 class ProductList extends Component {
-   
 
     constructor(renderHookId) {
         super(renderHookId);
+        this.fetchProducts()
     }
 
+    fetchProducts() {
+        this.products = [
+            new Product(
+                'A Pillow',
+                'https://www.ikea.com/th/en/images/products/rumsmalva-ergonomic-pillow-side-back-sleeper__0792315_pe764703_s5.jpg?f=s',
+                'A soft pillow!',
+                19.99
+            ),
+            new Product(
+                'A Carpet',
+                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlTdaf4jjG_b6Al6Y3GuJsYM1RxgeBPKPE2Q&usqp=CAU',
+                'A carpet which you might like - or not.',
+                89.99
+            ),
+        ]
+        this.renderProducts()
+    }
 
-    products = [
-        new Product(
-            'A Pillow',
-            'https://www.ikea.com/th/en/images/products/rumsmalva-ergonomic-pillow-side-back-sleeper__0792315_pe764703_s5.jpg?f=s',
-            'A soft pillow!',
-            19.99
-        ),
-        new Product(
-            'A Carpet',
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlTdaf4jjG_b6Al6Y3GuJsYM1RxgeBPKPE2Q&usqp=CAU',
-            'A carpet which you might like - or not.',
-            89.99
-        ),
-    ]
+    renderProducts() {
+        for (const product of this.products) {
+            new ProductItem(product, 'prod-list')
+        }
+    }
+    
 
     render() {
-        const prodList = this.createRootElement('ul', 'product-list', [new ElementAttribute('id', 'prod-list')])
-        for (const product of this.products) {
-            const productItem = new ProductItem(product, prodList.id)
-            productItem.render()
+        console.log('Rendering products list::products::', this.products);
+        this.createRootElement('ul', 'product-list', [new ElementAttribute('id', 'prod-list')])
+        if (this.products && this.products.length > 0) {
+            this.renderProducts()
         }
     }
 }
@@ -145,13 +160,15 @@ class ShoppingCart extends Component {
     }
 }
 
-class Shop {
+class Shop{
+
+    constructor() {
+        this.render()
+    }
+
     render() {
         this.cart = new ShoppingCart('app')
-        this.cart.render()
-        const productList = new ProductList('app')
-        productList.render()
-
+        new ProductList('app')
     }
 }
 
@@ -160,7 +177,6 @@ class App {
 
     static init() {
         const shop = new Shop()
-        shop.render()
         this.cart = shop.cart
         console.log('App set::cart::', this.cart)
     }
