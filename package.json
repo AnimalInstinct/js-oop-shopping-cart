@@ -1,0 +1,14 @@
+{
+  "name": "mini-shop",
+  "version": "1.0.0",
+  "description": "OOP based e-commerce basic app",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Makarov",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.9.0"
+  }
+}
